@@ -1,15 +1,8 @@
-Структура папок:
- 
 USB_HID_NIIET_CMAKE
 |   
 |   CMakeLists.txt
 |   makefile
 |   niiet_aspect.json
-|   
-+---.vscode
-|       launch.json
-|       settings.json
-|       tasks.json
 |       
 +---cmake
 |       riscv64-unknown-elf.cmake
