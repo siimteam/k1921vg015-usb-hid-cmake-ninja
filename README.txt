@@ -1,8 +1,7 @@
 USB_HID_NIIET_CMAKE
 |   
 |   CMakeLists.txt
-|   makefile
-|   niiet_aspect.json
+|   README.txt
 |       
 +---cmake
 |       riscv64-unknown-elf.cmake
