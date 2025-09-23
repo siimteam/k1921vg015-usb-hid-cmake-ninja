@@ -1,7 +1,12 @@
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR riscv32)
 
-set(CROSSTOOL_PATH $ENV{USERPROFILE}/.niiet_aspect/riscv_gcc_windows/bin CACHE PATH "Cross toolchain root directory") 
+if(WIN32)
+    set(CROSS_PLATFORM_USER_DIR "$ENV{USERPROFILE}")
+else()
+    set(CROSS_PLATFORM_USER_DIR "$ENV{HOME}")
+endif()
+set(CROSSTOOL_PATH ${CROSS_PLATFORM_USER_DIR}/.niiet_aspect/riscv_gcc_windows/bin CACHE PATH "Cross toolchain root directory") 
 
 # Look for GCC in path
 function(find_toolchain)
@@ -29,10 +34,10 @@ find_toolchain("riscv64-unknown-elf-")
 
 set(CMAKE_ASM_FLAGS "-x assembler-with-cpp")
 set(l_L "-L")
-set(l_opt $ENV{USERPROFILE}/.niiet_aspect/niiet_aspect_sdk/device/K1921VG015/ldscripts CACHE PATH "l_opt")
+set(l_opt ${CROSS_PLATFORM_USER_DIR}/.niiet_aspect/niiet_aspect_sdk/device/K1921VG015/ldscripts CACHE PATH "l_opt")
 message(STATUS "l_opt: ${l_opt}")
 set(t_T "-T")
-set(t_opt $ENV{USERPROFILE}/.niiet_aspect/niiet_aspect_sdk/device/K1921VG015/ldscripts/k1921vg015_flash.ld CACHE PATH "t_opt")
+set(t_opt ${CROSS_PLATFORM_USER_DIR}/.niiet_aspect/niiet_aspect_sdk/device/K1921VG015/ldscripts/k1921vg015_flash.ld CACHE PATH "t_opt")
 message(STATUS "t_opt: ${t_opt}")
 add_compile_options(
   -c
