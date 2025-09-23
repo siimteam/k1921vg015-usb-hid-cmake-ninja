@@ -48,7 +48,7 @@ add_compile_options(
 	"-DCKO_PLL0="
 	-static 
 	-std=gnu99 
-	"${l_L}${l_opt}"
+	${l_L}${l_opt}
 	-lc_nano 
 	-lg_nano 
 	-lgcc 

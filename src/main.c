@@ -69,8 +69,8 @@ void BSP_led_init()
 
 void BSP_pu_init()
 {
-    GPIOC->OUTENSET = 0x14;
-    GPIOC->DATAOUTCLR = 0x14;
+    GPIOC->OUTENSET = 0x04;
+    GPIOC->DATAOUTSET = 0x04;
 }
 
 //-- Peripheral init functions -------------------------------------------------
