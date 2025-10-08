@@ -1,8 +1,8 @@
 ﻿/*****************************************************************************
  * @file:    K1921VG015.h
  * @author   NIIET
- * @version: V2.0
- * @date:    03.11.2023
+ * @version: V2.4
+ * @date:    22.08.2025 
  * @brief:   K1921VG015 header file
  *****************************************************************************
  *
@@ -13,7 +13,7 @@
  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
  *
- * <h2><center>&copy; COPYRIGHT 2023 NIIET </center></h2>
+ * <h2><center>&copy; COPYRIGHT 2025 NIIET </center></h2>
  *****************************************************************************
  * FILE K1921VG015.h
  */
@@ -86,19 +86,19 @@ typedef enum Plic_IsrVect {
 #define MEM_FLASH_PAGE_SIZE                  4096UL
 #define MEM_FLASH_PAGE_SIZE_LOG2             12UL
 #define MEM_FLASH_PAGE_TOTAL                 256UL
-#define MEM_FLASH_SIZE                       (MEM_MFLASH_PAGE_TOTAL*MEM_MFLASH_PAGE_SIZE)
+#define MEM_FLASH_SIZE                       (MEM_FLASH_PAGE_TOTAL*MEM_FLASH_PAGE_SIZE)
 #define MEM_RAM0_BASE                         0x40000000UL
 #define MEM_RAM0_SIZE                         0x40000UL
 #define MEM_RAM1_BASE                         0x10000000UL
-#define MEM_RAM2_SIZE                         0x10000UL
+#define MEM_RAM1_SIZE                         0x10000UL
 
 /*--  CFGWORD: System configure word -----------------------------------------*/
 #define CFGWORD_BASE                          0x00001FF0UL
 
 typedef struct {
-    uint32_t JTAGEN               : 1;                              /*!< Enable JTAG pins (default 1 - enabled) */
-    uint32_t CFGWE                : 1;                              /*!< CFG (NVR) flash region write enable (default 1 - enabled) */
     uint32_t FLASHWE              : 1;                              /*!< Main flash region write enable (default 1 - enabled) */
+    uint32_t CFGWE                : 1;                              /*!< CFG (NVR) flash region write enable (default 1 - enabled) */
+    uint32_t JTAGEN               : 1;                              /*!< Enable JTAG pins (default 1 - enabled) */
 } CFGWORD_bits;
 
 /* Bit field positions: */
@@ -214,7 +214,8 @@ typedef struct
 /*--  DMA control structure --------------------------------------------------*/
 typedef struct
 {
-    DMA_Channel_TypeDef CH[32];                                      /*!< Control structure channels */
+    DMA_Channel_TypeDef CH[24];                                      /*!< Control structure channels */
+    __IO uint32_t RESERVED[32];
 } DMA_CtrlStruct_TypeDef;
 
 #define DMA_CH_GPIOA                          0                      /*!< GPIOA DMA channel */
@@ -232,12 +233,10 @@ typedef struct
 #define DMA_CH_UART2RX                        13                     /*!< UART2 RX DMA channel */
 #define DMA_CH_ADCSARSEQ0                     14                     /*!< ADCSAR sequencer 0 DMA channel */
 #define DMA_CH_ADCSARSEQ1                     15                     /*!< ADCSAR sequencer 1 DMA channel */
-#define DMA_CH_SPI0TX                         16                     /*!< SPI0 TX DMA channel */
-#define DMA_CH_SPI1TX                         17                     /*!< SPI1 TX DMA channel */
-#define DMA_CH_SPI2TX                         18                     /*!< SPI2 TX DMA channel */
-#define DMA_CH_SPI0RX                         19                     /*!< SPI0 RX DMA channel */
-#define DMA_CH_SPI1RX                         20                     /*!< SPI1 RX DMA channel */
-#define DMA_CH_SPI2RX                         21                     /*!< SPI2 RX DMA channel */
+#define DMA_CH_SPI0TX                         17                     /*!< SPI0 TX DMA channel */
+#define DMA_CH_SPI1TX                         18                     /*!< SPI1 TX DMA channel */
+#define DMA_CH_SPI0RX                         20                     /*!< SPI0 RX DMA channel */
+#define DMA_CH_SPI1RX                         21                     /*!< SPI1 RX DMA channel */
 #define DMA_CH_HASH                           22                     /*!< HASH DMA channel */
 
 /*--  DMA control data summary -----------------------------------------------*/
@@ -1558,23 +1557,22 @@ typedef struct {
 
 /* Bit field enums: */
 typedef enum {
-  TMR_CAPCOM_CTRL_OUTMODE_BitOUT                     = 0x0UL,                /*!< BitOUT */
-  TMR_CAPCOM_CTRL_OUTMODE_Set                        = 0x1UL,                /*!< Set */
-  TMR_CAPCOM_CTRL_OUTMODE_Toggle_Reset               = 0x2UL,                /*!< Toggle_Reset */
-  TMR_CAPCOM_CTRL_OUTMODE_Set_Reset	                 = 0x3UL,                /*!< Set_Reset */
-  TMR_CAPCOM_CTRL_OUTMODE_Toggle                     = 0x4UL,                /*!< Toggle */
-  TMR_CAPCOM_CTRL_OUTMODE_Reset                      = 0x5UL,                /*!< Reset */
-  TMR_CAPCOM_CTRL_OUTMODE_Toggle_Set                 = 0x6UL,                /*!< Toggle_Set */
-  TMR_CAPCOM_CTRL_OUTMODE_Reset_Set	                 = 0x7UL,                /*!< Reset_Set */
-} TMR_CAPCOM_CTRL_OUTMODE_Enum;
-
-typedef enum {
-  TMR_CAPCOM_CTRL_CAPMODE_None                       = 0x0UL,                /*!< None */
-  TMR_CAPCOM_CTRL_CAPMODE_Raise                      = 0x1UL,                /*!< Raise */
-  TMR_CAPCOM_CTRL_CAPMODE_Fail	                     = 0x2UL,                /*!< Fail */
-  TMR_CAPCOM_CTRL_CAPMODE_Edge	                     = 0x3UL,                /*!< Edge */
+  TMR_CAPCOM_CTRL_CAPMODE_None             = 0x0UL,                /*!< No Capture */
+  TMR_CAPCOM_CTRL_CAPMODE_Raise            = 0x1UL,                /*!< Capture on Raise */
+  TMR_CAPCOM_CTRL_CAPMODE_Fail             = 0x2UL,                /*!< Capture on Fail */
+  TMR_CAPCOM_CTRL_CAPMODE_Edge             = 0x3UL,                /*!< Capture on Raise and Fail */
 } TMR_CAPCOM_CTRL_CAPMODE_Enum;
 
+typedef enum {
+  TMR_CAPCOM_CTRL_OUTMODE_BitOUT          = 0x0UL,                /*!< Output control by bit OUT */
+  TMR_CAPCOM_CTRL_OUTMODE_Set             = 0x1UL,                /*!< Set */
+  TMR_CAPCOM_CTRL_OUTMODE_Toggle_Reset    = 0x2UL,                /*!< Toggle/Reset */
+  TMR_CAPCOM_CTRL_OUTMODE_Set_Reset       = 0x3UL,                /*!< Set/Reset */
+  TMR_CAPCOM_CTRL_OUTMODE_Toggle          = 0x4UL,                /*!< Toggle */
+  TMR_CAPCOM_CTRL_OUTMODE_Reset           = 0x5UL,                /*!< Reset */
+  TMR_CAPCOM_CTRL_OUTMODE_Toggle_Set      = 0x6UL,                /*!< Toggle/Set */
+  TMR_CAPCOM_CTRL_OUTMODE_Reset_Set       = 0x7UL,                /*!< сReset/Set */
+} TMR_CAPCOM_CTRL_OUTMODE_Enum;
 
 /*-- CAPCOM: VAL: Capture/Compare Value -----------------------------------------------------------------------*/
 typedef struct {
@@ -1870,22 +1868,22 @@ typedef struct {
 
 /* Bit field enums: */
 typedef enum {
-  TMR32_CAPCOM_CTRL_OUTMODE_BitOUT                     = 0x0UL,                /*!< BitOUT */
-  TMR32_CAPCOM_CTRL_OUTMODE_Set                        = 0x1UL,                /*!< Set */
-  TMR32_CAPCOM_CTRL_OUTMODE_Toggle_Reset               = 0x2UL,                /*!< Toggle_Reset */
-  TMR32_CAPCOM_CTRL_OUTMODE_Set_Reset	               = 0x3UL,                /*!< Set_Reset */
-  TMR32_CAPCOM_CTRL_OUTMODE_Toggle                     = 0x4UL,                /*!< Toggle */
-  TMR32_CAPCOM_CTRL_OUTMODE_Reset                      = 0x5UL,                /*!< Reset */
-  TMR32_CAPCOM_CTRL_OUTMODE_Toggle_Set                 = 0x6UL,                /*!< Toggle_Set */
-  TMR32_CAPCOM_CTRL_OUTMODE_Reset_Set	               = 0x7UL,                /*!< Reset_Set */
-} TMR32_CAPCOM_CTRL_OUTMODE_Enum;
+  TMR32_CAPCOM_CTRL_CAPMODE_None             = 0x0UL,                /*!< No Capture */
+  TMR32_CAPCOM_CTRL_CAPMODE_Raise            = 0x1UL,                /*!< Capture on Raise */
+  TMR32_CAPCOM_CTRL_CAPMODE_Fail             = 0x2UL,                /*!< Capture on Fail */
+  TMR32_CAPCOM_CTRL_CAPMODE_Edge             = 0x3UL,                /*!< Capture on Raise and Fail */
+} TMR32_CAPCOM_CTRL_CAPMODE_Enum;
 
 typedef enum {
-  TMR32_CAPCOM_CTRL_CAPMODE_None                       = 0x0UL,                /*!< None */
-  TMR32_CAPCOM_CTRL_CAPMODE_Raise                      = 0x1UL,                /*!< Raise */
-  TMR32_CAPCOM_CTRL_CAPMODE_Fail	                   = 0x2UL,                /*!< Fail */
-  TMR32_CAPCOM_CTRL_CAPMODE_Edge	                   = 0x3UL,                /*!< Edge */
-} TMR32_CAPCOM_CTRL_CAPMODE_Enum;
+  TMR32_CAPCOM_CTRL_OUTMODE_BitOUT          = 0x0UL,                /*!< Output control by bit OUT */
+  TMR32_CAPCOM_CTRL_OUTMODE_Set             = 0x1UL,                /*!< Set */
+  TMR32_CAPCOM_CTRL_OUTMODE_Toggle_Reset    = 0x2UL,                /*!< Toggle/Reset */
+  TMR32_CAPCOM_CTRL_OUTMODE_Set_Reset       = 0x3UL,                /*!< Set/Reset */
+  TMR32_CAPCOM_CTRL_OUTMODE_Toggle          = 0x4UL,                /*!< Toggle */
+  TMR32_CAPCOM_CTRL_OUTMODE_Reset           = 0x5UL,                /*!< Reset */
+  TMR32_CAPCOM_CTRL_OUTMODE_Toggle_Set      = 0x6UL,                /*!< Toggle/Set */
+  TMR32_CAPCOM_CTRL_OUTMODE_Reset_Set       = 0x7UL,                /*!< сReset/Set */
+} TMR32_CAPCOM_CTRL_OUTMODE_Enum;
 
 /*-- CAPCOM: VAL: Capture/Compare Value -----------------------------------------------------------------------*/
 typedef struct {
@@ -2593,7 +2591,6 @@ typedef struct {
     __IO uint16_t DR16;                                             /*!< DR16  : type used for 16 bit access */  
     __IO uint32_t DR;                                               /*!< DR    : type used for 32 bit access */
   };
-    __IO uint32_t Reserved0;
   union {                                                               /*!< CRC post register */
     __I uint32_t POST;                                               /*!< POST    : type used for word access */
     __I _CRC_POST_bits  POST_bit;                                    /*!< POST_bit: structure used for bit access */
@@ -3072,6 +3069,7 @@ typedef struct {
     __I _CRYPTO_TEXT_OUT_TEXT_OUT__bits TEXT_OUT__bit;               /*!< TEXT_OUT__bit: structure used for bit access */
   };
 } _CRYPTO_TEXT_OUT_TypeDef;
+
 typedef struct {
   __IO uint32_t IV[4];
   __IO uint32_t TEXT_IN[4];
@@ -3116,8 +3114,8 @@ typedef struct {
     __I _CRYPTO_NEXT_DESCRIPTOR_bits  NEXT_DESCRIPTOR_bit;                /*!< NEXT_DESCRIPTOR_bit: structure used for bit access */
   };
   __IO uint32_t Reserved2;
-  __IO uint32_t GCM_HASH[4];
-  __IO uint32_t GCM_TAG[4];
+  __IO uint32_t GCM_HASH[4];                                            /*!< Register GCM HASH */
+  __IO uint32_t GCM_TAG[4];                                             /*!< Register GCM TAG */
 } CRYPTO_TypeDef;
 
 
@@ -3942,7 +3940,6 @@ typedef struct {
     __I uint32_t SFIFO;                                              /*!< SFIFO : type used for word access */
     __I _ADCSAR_SEQ_SFIFO_bits SFIFO_bit;                            /*!< SFIFO_bit: structure used for bit access */
   };
-    __IO uint32_t Reserved1;
 } _ADCSAR_SEQ_TypeDef;
 //Cluster DC:
 typedef struct {
@@ -3996,12 +3993,12 @@ typedef struct {
     __I _ADCSAR_BSTAT_bits  BSTAT_bit;                               /*!< BSTAT_bit: structure used for bit access */
   };
   union {                                                               /*!< Digital comparator output trigger status register */
-    __O uint32_t DCTRIG;                                             /*!< DCTRIG    : type used for word access */
-    __O _ADCSAR_DCTRIG_bits  DCTRIG_bit;                             /*!< DCTRIG_bit: structure used for bit access */
+    __IO uint32_t DCTRIG;                                             /*!< DCTRIG    : type used for word access */
+    __IO _ADCSAR_DCTRIG_bits  DCTRIG_bit;                             /*!< DCTRIG_bit: structure used for bit access */
   };
   union {                                                               /*!< Digital comparator compare event status register */
-    __O uint32_t DCEV;                                               /*!< DCEV    : type used for word access */
-    __O _ADCSAR_DCEV_bits  DCEV_bit;                                 /*!< DCEV_bit: structure used for bit access */
+    __IO uint32_t DCEV;                                               /*!< DCEV    : type used for word access */
+    __IO _ADCSAR_DCEV_bits  DCEV_bit;                                 /*!< DCEV_bit: structure used for bit access */
   };
   union {                                                               /*!< Interrupt counter clear control */
     __IO uint32_t CICNT;                                             /*!< CICNT    : type used for word access */
@@ -4029,7 +4026,7 @@ typedef struct {
   };
     __IO uint32_t Reserved0[4];
   _ADCSAR_SEQ_TypeDef SEQ[2];
-    __IO uint32_t Reserved1[208];
+    __IO uint32_t Reserved1[210];
   _ADCSAR_DC_TypeDef DC[8];
     __IO uint32_t Reserved2[56];
   union {                                                               /*!< ADC module control register */
@@ -4551,62 +4548,6 @@ typedef struct {
 /* Bit field masks: */
 #define GPIO_DATAOUTTGL_VAL_Msk               0x0000FFFFUL           /*!< Data output toggle */
 
-/*--  DENSET: Digital function (PAD) enable register ----------------------------------------------------------*/
-typedef struct {
-  uint32_t PIN0                   :1;                                /*!< Digital function (PAD) enable on pin 0 */
-  uint32_t PIN1                   :1;                                /*!< Digital function (PAD) enable on pin 1 */
-  uint32_t PIN2                   :1;                                /*!< Digital function (PAD) enable on pin 2 */
-  uint32_t PIN3                   :1;                                /*!< Digital function (PAD) enable on pin 3 */
-  uint32_t PIN4                   :1;                                /*!< Digital function (PAD) enable on pin 4 */
-  uint32_t PIN5                   :1;                                /*!< Digital function (PAD) enable on pin 5 */
-  uint32_t PIN6                   :1;                                /*!< Digital function (PAD) enable on pin 6 */
-  uint32_t PIN7                   :1;                                /*!< Digital function (PAD) enable on pin 7 */
-  uint32_t PIN8                   :1;                                /*!< Digital function (PAD) enable on pin 8 */
-  uint32_t PIN9                   :1;                                /*!< Digital function (PAD) enable on pin 9 */
-  uint32_t PIN10                  :1;                                /*!< Digital function (PAD) enable on pin 10 */
-  uint32_t PIN11                  :1;                                /*!< Digital function (PAD) enable on pin 11 */
-  uint32_t PIN12                  :1;                                /*!< Digital function (PAD) enable on pin 12 */
-  uint32_t PIN13                  :1;                                /*!< Digital function (PAD) enable on pin 13 */
-  uint32_t PIN14                  :1;                                /*!< Digital function (PAD) enable on pin 14 */
-  uint32_t PIN15                  :1;                                /*!< Digital function (PAD) enable on pin 15 */
-} _GPIO_DENSET_bits;
-
-/* Bit field positions: */
-#define GPIO_DENSET_PIN0_Pos                  0                      /*!< Digital function (PAD) enable on pin 0 */
-#define GPIO_DENSET_PIN1_Pos                  1                      /*!< Digital function (PAD) enable on pin 1 */
-#define GPIO_DENSET_PIN2_Pos                  2                      /*!< Digital function (PAD) enable on pin 2 */
-#define GPIO_DENSET_PIN3_Pos                  3                      /*!< Digital function (PAD) enable on pin 3 */
-#define GPIO_DENSET_PIN4_Pos                  4                      /*!< Digital function (PAD) enable on pin 4 */
-#define GPIO_DENSET_PIN5_Pos                  5                      /*!< Digital function (PAD) enable on pin 5 */
-#define GPIO_DENSET_PIN6_Pos                  6                      /*!< Digital function (PAD) enable on pin 6 */
-#define GPIO_DENSET_PIN7_Pos                  7                      /*!< Digital function (PAD) enable on pin 7 */
-#define GPIO_DENSET_PIN8_Pos                  8                      /*!< Digital function (PAD) enable on pin 8 */
-#define GPIO_DENSET_PIN9_Pos                  9                      /*!< Digital function (PAD) enable on pin 9 */
-#define GPIO_DENSET_PIN10_Pos                 10                     /*!< Digital function (PAD) enable on pin 10 */
-#define GPIO_DENSET_PIN11_Pos                 11                     /*!< Digital function (PAD) enable on pin 11 */
-#define GPIO_DENSET_PIN12_Pos                 12                     /*!< Digital function (PAD) enable on pin 12 */
-#define GPIO_DENSET_PIN13_Pos                 13                     /*!< Digital function (PAD) enable on pin 13 */
-#define GPIO_DENSET_PIN14_Pos                 14                     /*!< Digital function (PAD) enable on pin 14 */
-#define GPIO_DENSET_PIN15_Pos                 15                     /*!< Digital function (PAD) enable on pin 15 */
-
-/* Bit field masks: */
-#define GPIO_DENSET_PIN0_Msk                  0x00000001UL           /*!< Digital function (PAD) enable on pin 0 */
-#define GPIO_DENSET_PIN1_Msk                  0x00000002UL           /*!< Digital function (PAD) enable on pin 1 */
-#define GPIO_DENSET_PIN2_Msk                  0x00000004UL           /*!< Digital function (PAD) enable on pin 2 */
-#define GPIO_DENSET_PIN3_Msk                  0x00000008UL           /*!< Digital function (PAD) enable on pin 3 */
-#define GPIO_DENSET_PIN4_Msk                  0x00000010UL           /*!< Digital function (PAD) enable on pin 4 */
-#define GPIO_DENSET_PIN5_Msk                  0x00000020UL           /*!< Digital function (PAD) enable on pin 5 */
-#define GPIO_DENSET_PIN6_Msk                  0x00000040UL           /*!< Digital function (PAD) enable on pin 6 */
-#define GPIO_DENSET_PIN7_Msk                  0x00000080UL           /*!< Digital function (PAD) enable on pin 7 */
-#define GPIO_DENSET_PIN8_Msk                  0x00000100UL           /*!< Digital function (PAD) enable on pin 8 */
-#define GPIO_DENSET_PIN9_Msk                  0x00000200UL           /*!< Digital function (PAD) enable on pin 9 */
-#define GPIO_DENSET_PIN10_Msk                 0x00000400UL           /*!< Digital function (PAD) enable on pin 10 */
-#define GPIO_DENSET_PIN11_Msk                 0x00000800UL           /*!< Digital function (PAD) enable on pin 11 */
-#define GPIO_DENSET_PIN12_Msk                 0x00001000UL           /*!< Digital function (PAD) enable on pin 12 */
-#define GPIO_DENSET_PIN13_Msk                 0x00002000UL           /*!< Digital function (PAD) enable on pin 13 */
-#define GPIO_DENSET_PIN14_Msk                 0x00004000UL           /*!< Digital function (PAD) enable on pin 14 */
-#define GPIO_DENSET_PIN15_Msk                 0x00008000UL           /*!< Digital function (PAD) enable on pin 15 */
-
 /*--  DENCLR: Digital function (PAD) disable register ---------------------------------------------------------*/
 typedef struct {
   uint32_t VAL                    :16;                               /*!< Digital function (PAD) disable */
@@ -4617,143 +4558,6 @@ typedef struct {
 
 /* Bit field masks: */
 #define GPIO_DENCLR_VAL_Msk                   0x0000FFFFUL           /*!< Digital function (PAD) disable */
-
-/*--  INMODE: Select input mode register ----------------------------------------------------------------------*/
-typedef struct {
-  uint32_t PIN0                   :2;                                /*!< Select input mode for pin 0 */
-  uint32_t PIN1                   :2;                                /*!< Select input mode for pin 1 */
-  uint32_t PIN2                   :2;                                /*!< Select input mode for pin 2 */
-  uint32_t PIN3                   :2;                                /*!< Select input mode for pin 3 */
-  uint32_t PIN4                   :2;                                /*!< Select input mode for pin 4 */
-  uint32_t PIN5                   :2;                                /*!< Select input mode for pin 5 */
-  uint32_t PIN6                   :2;                                /*!< Select input mode for pin 6 */
-  uint32_t PIN7                   :2;                                /*!< Select input mode for pin 7 */
-  uint32_t PIN8                   :2;                                /*!< Select input mode for pin 8 */
-  uint32_t PIN9                   :2;                                /*!< Select input mode for pin 9 */
-  uint32_t PIN10                  :2;                                /*!< Select input mode for pin 10 */
-  uint32_t PIN11                  :2;                                /*!< Select input mode for pin 11 */
-  uint32_t PIN12                  :2;                                /*!< Select input mode for pin 12 */
-  uint32_t PIN13                  :2;                                /*!< Select input mode for pin 13 */
-  uint32_t PIN14                  :2;                                /*!< Select input mode for pin 14 */
-  uint32_t PIN15                  :2;                                /*!< Select input mode for pin 15 */
-} _GPIO_INMODE_bits;
-
-/* Bit field positions: */
-#define GPIO_INMODE_PIN0_Pos                  0                      /*!< Select input mode for pin 0 */
-#define GPIO_INMODE_PIN1_Pos                  2                      /*!< Select input mode for pin 1 */
-#define GPIO_INMODE_PIN2_Pos                  4                      /*!< Select input mode for pin 2 */
-#define GPIO_INMODE_PIN3_Pos                  6                      /*!< Select input mode for pin 3 */
-#define GPIO_INMODE_PIN4_Pos                  8                      /*!< Select input mode for pin 4 */
-#define GPIO_INMODE_PIN5_Pos                  10                     /*!< Select input mode for pin 5 */
-#define GPIO_INMODE_PIN6_Pos                  12                     /*!< Select input mode for pin 6 */
-#define GPIO_INMODE_PIN7_Pos                  14                     /*!< Select input mode for pin 7 */
-#define GPIO_INMODE_PIN8_Pos                  16                     /*!< Select input mode for pin 8 */
-#define GPIO_INMODE_PIN9_Pos                  18                     /*!< Select input mode for pin 9 */
-#define GPIO_INMODE_PIN10_Pos                 20                     /*!< Select input mode for pin 10 */
-#define GPIO_INMODE_PIN11_Pos                 22                     /*!< Select input mode for pin 11 */
-#define GPIO_INMODE_PIN12_Pos                 24                     /*!< Select input mode for pin 12 */
-#define GPIO_INMODE_PIN13_Pos                 26                     /*!< Select input mode for pin 13 */
-#define GPIO_INMODE_PIN14_Pos                 28                     /*!< Select input mode for pin 14 */
-#define GPIO_INMODE_PIN15_Pos                 30                     /*!< Select input mode for pin 15 */
-
-/* Bit field masks: */
-#define GPIO_INMODE_PIN0_Msk                  0x00000003UL           /*!< Select input mode for pin 0 */
-#define GPIO_INMODE_PIN1_Msk                  0x0000000CUL           /*!< Select input mode for pin 1 */
-#define GPIO_INMODE_PIN2_Msk                  0x00000030UL           /*!< Select input mode for pin 2 */
-#define GPIO_INMODE_PIN3_Msk                  0x000000C0UL           /*!< Select input mode for pin 3 */
-#define GPIO_INMODE_PIN4_Msk                  0x00000300UL           /*!< Select input mode for pin 4 */
-#define GPIO_INMODE_PIN5_Msk                  0x00000C00UL           /*!< Select input mode for pin 5 */
-#define GPIO_INMODE_PIN6_Msk                  0x00003000UL           /*!< Select input mode for pin 6 */
-#define GPIO_INMODE_PIN7_Msk                  0x0000C000UL           /*!< Select input mode for pin 7 */
-#define GPIO_INMODE_PIN8_Msk                  0x00030000UL           /*!< Select input mode for pin 8 */
-#define GPIO_INMODE_PIN9_Msk                  0x000C0000UL           /*!< Select input mode for pin 9 */
-#define GPIO_INMODE_PIN10_Msk                 0x00300000UL           /*!< Select input mode for pin 10 */
-#define GPIO_INMODE_PIN11_Msk                 0x00C00000UL           /*!< Select input mode for pin 11 */
-#define GPIO_INMODE_PIN12_Msk                 0x03000000UL           /*!< Select input mode for pin 12 */
-#define GPIO_INMODE_PIN13_Msk                 0x0C000000UL           /*!< Select input mode for pin 13 */
-#define GPIO_INMODE_PIN14_Msk                 0x30000000UL           /*!< Select input mode for pin 14 */
-#define GPIO_INMODE_PIN15_Msk                 0xC0000000UL           /*!< Select input mode for pin 15 */
-
-/* Bit field enums: */
-typedef enum {
-  GPIO_INMODE_PIN0_Schmitt                   = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN0_Disable                   = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN0_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN1_Schmitt                   = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN1_Disable                   = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN1_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN2_Schmitt                   = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN2_Disable                   = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN2_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN3_Schmitt                   = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN3_Disable                   = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN3_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN4_Schmitt                   = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN4_Disable                   = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN4_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN5_Schmitt                   = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN5_Disable                   = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN5_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN6_Schmitt                   = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN6_Disable                   = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN6_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN7_Schmitt                   = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN7_Disable                   = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN7_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN8_Schmitt                   = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN8_Disable                   = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN8_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN9_Schmitt                   = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN9_Disable                   = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN9_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN10_Schmitt                  = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN10_Disable                  = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN10_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN11_Schmitt                  = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN11_Disable                  = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN11_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN12_Schmitt                  = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN12_Disable                  = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN12_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN13_Schmitt                  = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN13_Disable                  = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN13_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN14_Schmitt                  = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN14_Disable                  = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN14_Enum;
-
-typedef enum {
-  GPIO_INMODE_PIN15_Schmitt                  = 0x0UL,                /*!< Scmitt buffer */
-  GPIO_INMODE_PIN15_Disable                  = 0x3UL,                /*!< Input buffer disabled */
-} GPIO_INMODE_PIN15_Enum;
 
 /*--  PULLMODE: Select pull mode register ---------------------------------------------------------------------*/
 typedef struct {
@@ -5044,143 +4848,6 @@ typedef enum {
   GPIO_OUTMODE_PIN15_OD                      = 0x1UL,                /*!< Open drain output */
   GPIO_OUTMODE_PIN15_OS                      = 0x2UL,                /*!< Open source output */
 } GPIO_OUTMODE_PIN15_Enum;
-
-/*--  DRIVEMODE: Select drive mode register -------------------------------------------------------------------*/
-typedef struct {
-  uint32_t PIN0                   :2;                                /*!< Select drive mode for pin 0 */
-  uint32_t PIN1                   :2;                                /*!< Select drive mode for pin 1 */
-  uint32_t PIN2                   :2;                                /*!< Select drive mode for pin 2 */
-  uint32_t PIN3                   :2;                                /*!< Select drive mode for pin 3 */
-  uint32_t PIN4                   :2;                                /*!< Select drive mode for pin 4 */
-  uint32_t PIN5                   :2;                                /*!< Select drive mode for pin 5 */
-  uint32_t PIN6                   :2;                                /*!< Select drive mode for pin 6 */
-  uint32_t PIN7                   :2;                                /*!< Select drive mode for pin 7 */
-  uint32_t PIN8                   :2;                                /*!< Select drive mode for pin 8 */
-  uint32_t PIN9                   :2;                                /*!< Select drive mode for pin 9 */
-  uint32_t PIN10                  :2;                                /*!< Select drive mode for pin 10 */
-  uint32_t PIN11                  :2;                                /*!< Select drive mode for pin 11 */
-  uint32_t PIN12                  :2;                                /*!< Select drive mode for pin 12 */
-  uint32_t PIN13                  :2;                                /*!< Select drive mode for pin 13 */
-  uint32_t PIN14                  :2;                                /*!< Select drive mode for pin 14 */
-  uint32_t PIN15                  :2;                                /*!< Select drive mode for pin 15 */
-} _GPIO_DRIVEMODE_bits;
-
-/* Bit field positions: */
-#define GPIO_DRIVEMODE_PIN0_Pos               0                      /*!< Select drive mode for pin 0 */
-#define GPIO_DRIVEMODE_PIN1_Pos               2                      /*!< Select drive mode for pin 1 */
-#define GPIO_DRIVEMODE_PIN2_Pos               4                      /*!< Select drive mode for pin 2 */
-#define GPIO_DRIVEMODE_PIN3_Pos               6                      /*!< Select drive mode for pin 3 */
-#define GPIO_DRIVEMODE_PIN4_Pos               8                      /*!< Select drive mode for pin 4 */
-#define GPIO_DRIVEMODE_PIN5_Pos               10                     /*!< Select drive mode for pin 5 */
-#define GPIO_DRIVEMODE_PIN6_Pos               12                     /*!< Select drive mode for pin 6 */
-#define GPIO_DRIVEMODE_PIN7_Pos               14                     /*!< Select drive mode for pin 7 */
-#define GPIO_DRIVEMODE_PIN8_Pos               16                     /*!< Select drive mode for pin 8 */
-#define GPIO_DRIVEMODE_PIN9_Pos               18                     /*!< Select drive mode for pin 9 */
-#define GPIO_DRIVEMODE_PIN10_Pos              20                     /*!< Select drive mode for pin 10 */
-#define GPIO_DRIVEMODE_PIN11_Pos              22                     /*!< Select drive mode for pin 11 */
-#define GPIO_DRIVEMODE_PIN12_Pos              24                     /*!< Select drive mode for pin 12 */
-#define GPIO_DRIVEMODE_PIN13_Pos              26                     /*!< Select drive mode for pin 13 */
-#define GPIO_DRIVEMODE_PIN14_Pos              28                     /*!< Select drive mode for pin 14 */
-#define GPIO_DRIVEMODE_PIN15_Pos              30                     /*!< Select drive mode for pin 15 */
-
-/* Bit field masks: */
-#define GPIO_DRIVEMODE_PIN0_Msk               0x00000003UL           /*!< Select drive mode for pin 0 */
-#define GPIO_DRIVEMODE_PIN1_Msk               0x0000000CUL           /*!< Select drive mode for pin 1 */
-#define GPIO_DRIVEMODE_PIN2_Msk               0x00000030UL           /*!< Select drive mode for pin 2 */
-#define GPIO_DRIVEMODE_PIN3_Msk               0x000000C0UL           /*!< Select drive mode for pin 3 */
-#define GPIO_DRIVEMODE_PIN4_Msk               0x00000300UL           /*!< Select drive mode for pin 4 */
-#define GPIO_DRIVEMODE_PIN5_Msk               0x00000C00UL           /*!< Select drive mode for pin 5 */
-#define GPIO_DRIVEMODE_PIN6_Msk               0x00003000UL           /*!< Select drive mode for pin 6 */
-#define GPIO_DRIVEMODE_PIN7_Msk               0x0000C000UL           /*!< Select drive mode for pin 7 */
-#define GPIO_DRIVEMODE_PIN8_Msk               0x00030000UL           /*!< Select drive mode for pin 8 */
-#define GPIO_DRIVEMODE_PIN9_Msk               0x000C0000UL           /*!< Select drive mode for pin 9 */
-#define GPIO_DRIVEMODE_PIN10_Msk              0x00300000UL           /*!< Select drive mode for pin 10 */
-#define GPIO_DRIVEMODE_PIN11_Msk              0x00C00000UL           /*!< Select drive mode for pin 11 */
-#define GPIO_DRIVEMODE_PIN12_Msk              0x03000000UL           /*!< Select drive mode for pin 12 */
-#define GPIO_DRIVEMODE_PIN13_Msk              0x0C000000UL           /*!< Select drive mode for pin 13 */
-#define GPIO_DRIVEMODE_PIN14_Msk              0x30000000UL           /*!< Select drive mode for pin 14 */
-#define GPIO_DRIVEMODE_PIN15_Msk              0xC0000000UL           /*!< Select drive mode for pin 15 */
-
-/* Bit field enums: */
-typedef enum {
-  GPIO_DRIVEMODE_PIN0_HS                     = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN0_LS                     = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN0_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN1_HS                     = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN1_LS                     = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN1_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN2_HS                     = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN2_LS                     = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN2_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN3_HS                     = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN3_LS                     = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN3_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN4_HS                     = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN4_LS                     = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN4_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN5_HS                     = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN5_LS                     = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN5_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN6_HS                     = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN6_LS                     = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN6_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN7_HS                     = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN7_LS                     = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN7_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN8_HS                     = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN8_LS                     = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN8_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN9_HS                     = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN9_LS                     = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN9_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN10_HS                    = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN10_LS                    = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN10_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN11_HS                    = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN11_LS                    = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN11_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN12_HS                    = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN12_LS                    = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN12_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN13_HS                    = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN13_LS                    = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN13_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN14_HS                    = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN14_LS                    = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN14_Enum;
-
-typedef enum {
-  GPIO_DRIVEMODE_PIN15_HS                    = 0x0UL,                /*!< High strength */
-  GPIO_DRIVEMODE_PIN15_LS                    = 0x2UL,                /*!< Low strength */
-} GPIO_DRIVEMODE_PIN15_Enum;
 
 /*--  OUTENSET: Output enable register ------------------------------------------------------------------------*/
 typedef struct {
@@ -6366,11 +6033,7 @@ typedef struct {
     __O uint32_t DATAOUTTGL;                                           /*!< DATAOUTTGL    : type used for word access */
     __O _GPIO_DATAOUTTGL_bits  DATAOUTTGL_bit;                       /*!< DATAOUTTGL_bit: structure used for bit access */
   };
-  __IO uint32_t Reserved0[2];
-  union {                                                               /*!< Select input mode register */
-    __IO uint32_t INMODE;                                            /*!< INMODE    : type used for word access */
-    __IO _GPIO_INMODE_bits  INMODE_bit;                              /*!< INMODE_bit: structure used for bit access */
-  };
+  __IO uint32_t Reserved0[3];
   union {                                                               /*!< Select pull mode register */
     __IO uint32_t PULLMODE;                                           /*!< PULLMODE    : type used for word access */
     __IO _GPIO_PULLMODE_bits  PULLMODE_bit;                          /*!< PULLMODE_bit: structure used for bit access */
@@ -7264,10 +6927,9 @@ typedef struct {
 
 /* Bit field enums: */
 typedef enum {
-  USB_PLLUSBCFG3_USBCLKSEL_PLLUSBClk            = 0x0UL,                /*!< PLLUSBClk */
-  USB_PLLUSBCFG3_USBCLKSEL_SYSClk               = 0x1UL,                /*!< SYSClk */
+  USB_PLLUSBCFG3_USBCLKSEL_PLLUSBClk        = 0x0UL,                /*!< PLLUSBClk (FOUT0) */
+  USB_PLLUSBCFG3_USBCLKSEL_SYSClk           = 0x1UL,                /*!< SYSClk */
 } USB_PLLUSBCFG3_USBCLKSEL_Enum;
-
 
 /*--  PLLUSBSTAT: PLL Status Register -------------------------------------------------------------------------*/
 typedef struct {
@@ -11782,28 +11444,6 @@ typedef struct {
 /* Bit field masks: */
 #define PMURTC_RTC_REG_VAL_Msk                0xFFFFFFFFUL           /*!<  */
 
-/*--  RTC_TICKGEN: Tick counter register (used to generate clk1s) ---------------------------------------------*/
-typedef struct {
-  uint32_t VAL                    :21;                               /*!< (debug and production test only) Overwrite value of tick counter used for generation of clk1s */
-} _PMURTC_RTC_TICKGEN_bits;
-
-/* Bit field positions: */
-#define PMURTC_RTC_TICKGEN_VAL_Pos            0                      /*!< (debug and production test only) Overwrite value of tick counter used for generation of clk1s */
-
-/* Bit field masks: */
-#define PMURTC_RTC_TICKGEN_VAL_Msk            0x001FFFFFUL           /*!< (debug and production test only) Overwrite value of tick counter used for generation of clk1s */
-
-/*--  RTC_TRIM1S_LD: TRIM1S load regiter ----------------------------------------------------------------------*/
-typedef struct {
-  uint32_t VAL                    :32;                               /*!< RTC_TRIM.TRIM1S will be used after write to this register */
-} _PMURTC_RTC_TRIM1S_LD_bits;
-
-/* Bit field positions: */
-#define PMURTC_RTC_TRIM1S_LD_VAL_Pos          0                      /*!< RTC_TRIM.TRIM1S will be used after write to this register */
-
-/* Bit field masks: */
-#define PMURTC_RTC_TRIM1S_LD_VAL_Msk          0xFFFFFFFFUL           /*!< RTC_TRIM.TRIM1S will be used after write to this register */
-
 /*--  PMU_WK3EN: PMU WKVBATPER Event Enable register ----------------------------------------------------------*/
 typedef struct {
   uint32_t CMP0                   :1;                                /*!< Comparator 0 event enable for WKVBATPER */
@@ -11994,9 +11634,7 @@ typedef struct {
   uint32_t SRAM1HI_PD             :1;                                /*!< Upper 32k SRAM1 powerdown alltime */
   uint32_t EXTOSC                 :1;                                /*!< Stop clock generation of external crystal oscillator alltime */
   uint32_t INTOSC                 :1;                                /*!< Stop clock generation of internal RC oscillator alltime */
-  uint32_t                        :9;                                /*!< RESERVED */
-  uint32_t SRAM1LO_RET            :1;                                /*!< Lower 32k SRAM1 in retention mode */
-  uint32_t SRAM1HI_RET            :1;                                /*!< Upper 32k SRAM1 in retention mode */
+  uint32_t                        :11;                               /*!< RESERVED */
 } _PMURTC_PMU_VBATPER_FORCE_bits;
 
 /* Bit field positions: */
@@ -12007,8 +11645,6 @@ typedef struct {
 #define PMURTC_PMU_VBATPER_FORCE_SRAM1HI_PD_Pos       4              /*!< Upper 32k SRAM1 powerdown alltime */
 #define PMURTC_PMU_VBATPER_FORCE_EXTOSC_Pos       5                  /*!< Stop clock generation of external crystal oscillator alltime */
 #define PMURTC_PMU_VBATPER_FORCE_INTOSC_Pos       6                  /*!< Stop clock generation of internal RC oscillator alltime */
-#define PMURTC_PMU_VBATPER_FORCE_SRAM1LO_RET_Pos       16            /*!< Lower 32k SRAM1 in retention mode */
-#define PMURTC_PMU_VBATPER_FORCE_SRAM1HI_RET_Pos       17            /*!< Upper 32k SRAM1 in retention mode */
 
 /* Bit field masks: */
 #define PMURTC_PMU_VBATPER_FORCE_DACPD_Msk       0x00000001UL         /*!< DAC powerdown alltime */
@@ -12018,8 +11654,6 @@ typedef struct {
 #define PMURTC_PMU_VBATPER_FORCE_SRAM1HI_PD_Msk       0x00000010UL         /*!< Upper 32k SRAM1 powerdown alltime */
 #define PMURTC_PMU_VBATPER_FORCE_EXTOSC_Msk       0x00000020UL         /*!< Stop clock generation of external crystal oscillator alltime */
 #define PMURTC_PMU_VBATPER_FORCE_INTOSC_Msk       0x00000040UL         /*!< Stop clock generation of internal RC oscillator alltime */
-#define PMURTC_PMU_VBATPER_FORCE_SRAM1LO_RET_Msk       0x00010000UL         /*!< Lower 32k SRAM1 in retention mode */
-#define PMURTC_PMU_VBATPER_FORCE_SRAM1HI_RET_Msk       0x00020000UL         /*!< Upper 32k SRAM1 in retention mode */
 
 /*--  PMU_VBATPER_WFI: PMU vbat domain periph powerdown WFI register ------------------------------------------*/
 typedef struct {
@@ -12030,9 +11664,7 @@ typedef struct {
   uint32_t SRAM1HI_PD             :1;                                /*!< Upper 32k SRAM1 powerdown after WFI command */
   uint32_t EXTOSC                 :1;                                /*!< Stop clock generation of external crystal oscillator after WFI command */
   uint32_t INTOSC                 :1;                                /*!< Stop clock generation of internal RC oscillator after WFI command */
-  uint32_t                        :9;                                /*!< RESERVED */
-  uint32_t SRAM1LO_RET            :1;                                /*!< Lower 32k SRAM1 in retention mode after WFI command */
-  uint32_t SRAM1HI_RET            :1;                                /*!< Upper 32k SRAM1 in retention mode after WFI command */
+  uint32_t                        :11;                               /*!< RESERVED */
 } _PMURTC_PMU_VBATPER_WFI_bits;
 
 /* Bit field positions: */
@@ -12043,8 +11675,6 @@ typedef struct {
 #define PMURTC_PMU_VBATPER_WFI_SRAM1HI_PD_Pos       4                /*!< Upper 32k SRAM1 powerdown after WFI command */
 #define PMURTC_PMU_VBATPER_WFI_EXTOSC_Pos       5                    /*!< Stop clock generation of external crystal oscillator after WFI command */
 #define PMURTC_PMU_VBATPER_WFI_INTOSC_Pos       6                    /*!< Stop clock generation of internal RC oscillator after WFI command */
-#define PMURTC_PMU_VBATPER_WFI_SRAM1LO_RET_Pos       16              /*!< Lower 32k SRAM1 in retention mode after WFI command */
-#define PMURTC_PMU_VBATPER_WFI_SRAM1HI_RET_Pos       17              /*!< Upper 32k SRAM1 in retention mode after WFI command */
 
 /* Bit field masks: */
 #define PMURTC_PMU_VBATPER_WFI_DACPD_Msk       0x00000001UL          /*!< DAC powerdown after WFI command */
@@ -12054,8 +11684,6 @@ typedef struct {
 #define PMURTC_PMU_VBATPER_WFI_SRAM1HI_PD_Msk       0x00000010UL         /*!< Upper 32k SRAM1 powerdown after WFI command */
 #define PMURTC_PMU_VBATPER_WFI_EXTOSC_Msk       0x00000020UL         /*!< Stop clock generation of external crystal oscillator after WFI command */
 #define PMURTC_PMU_VBATPER_WFI_INTOSC_Msk       0x00000040UL         /*!< Stop clock generation of internal RC oscillator after WFI command */
-#define PMURTC_PMU_VBATPER_WFI_SRAM1LO_RET_Msk       0x00010000UL         /*!< Lower 32k SRAM1 in retention mode after WFI command */
-#define PMURTC_PMU_VBATPER_WFI_SRAM1HI_RET_Msk       0x00020000UL         /*!< Upper 32k SRAM1 in retention mode after WFI command */
 
 /*--  IWDG_CFG: IWDG Clock configuration register -------------------------------------------------------------*/
 typedef struct {
@@ -12094,16 +11722,16 @@ typedef struct {
 #define PMURTC_VBATRST_RSTEN_Msk              0x00000001UL           /*!< Reset enable */
 #define PMURTC_VBATRST_KEY_Msk                0xFFFF0000UL           /*!< KEY 'C0DE' in hexadecimal for unblocking */
 
-/*--  CPE_STAT: CPE Status Register ---------------------------------------------------------------------------*/
+/*--  HSI_TRIM: HSI TRIM Register ---------------------------------------------------------------------------*/
 typedef struct {
-  uint32_t CPE                    :1;                                /*!< Status of CPE PAD latched after PowerOn vbat domain */
-} _PMURTC_CPE_STAT_bits;
+  uint32_t TRIM                    :4;                                /*!< HSI TRIM */
+} _PMURTC_HSI_TRIM_bits;
 
 /* Bit field positions: */
-#define PMURTC_CPE_STAT_CPE_Pos               0                      /*!< Status of CPE PAD latched after PowerOn vbat domain */
+#define PMURTC_HSI_TRIM_TRIM_Pos               0                      /*!< HSI TRIM */
 
 /* Bit field masks: */
-#define PMURTC_CPE_STAT_CPE_Msk               0x00000001UL           /*!< Status of CPE PAD latched after PowerOn vbat domain */
+#define PMURTC_HSI_TRIM_TRIM_Msk               0x0000000FUL           /*!< HSI TRIM */
 
 //Cluster RTC_REG:
 typedef struct {
@@ -12147,15 +11775,7 @@ typedef struct {
     __IO _PMURTC_RTC_WAKECFG_bits  RTC_WAKECFG_bit;                  /*!< RTC_WAKECFG_bit: structure used for bit access */
   };
   _PMURTC_RTC_REG_TypeDef RTC_REG[16];
-  union {                                                               /*!< Tick counter register (used to generate clk1s) */
-    __O uint32_t RTC_TICKGEN;                                           /*!< RTC_TICKGEN    : type used for word access */
-    __O _PMURTC_RTC_TICKGEN_bits  RTC_TICKGEN_bit;                   /*!< RTC_TICKGEN_bit: structure used for bit access */
-  };
-  union {                                                               /*!< TRIM1S load regiter */
-    __O uint32_t RTC_TRIM1S_LD;                                           /*!< RTC_TRIM1S_LD    : type used for word access */
-    __O _PMURTC_RTC_TRIM1S_LD_bits  RTC_TRIM1S_LD_bit;                /*!< RTC_TRIM1S_LD_bit: structure used for bit access */
-  };
-    __IO uint32_t Reserved0[6];
+    __IO uint32_t Reserved0[8];
   union {                                                               /*!< PMU WKVBATPER Event Enable register */
     __IO uint32_t PMU_WK3EN;                                           /*!< PMU_WK3EN    : type used for word access */
     __IO _PMURTC_PMU_WK3EN_bits  PMU_WK3EN_bit;                      /*!< PMU_WK3EN_bit: structure used for bit access */
@@ -12209,9 +11829,10 @@ typedef struct {
     __O uint32_t VBATRST;                                            /*!< VBATRST    : type used for word access */
     __O _PMURTC_VBATRST_bits  VBATRST_bit;                           /*!< VBATRST_bit: structure used for bit access */
   };
-  union {                                                               /*!< CPE Status Register */
-    __I uint32_t CPE_STAT;                                           /*!< CPE_STAT    : type used for word access */
-    __I _PMURTC_CPE_STAT_bits  CPE_STAT_bit;                         /*!< CPE_STAT_bit: structure used for bit access */
+    __IO uint32_t Reserved2;
+  union {                                                               /*!< HSI TRIM Register */
+    __I uint32_t HSI_TRIM;                                           /*!< HSI_TRIM    : type used for word access */
+    __I _PMURTC_HSI_TRIM_bits  HSI_TRIM_bit;                         /*!< HSI_TRIM_bit: structure used for bit access */
   };
 } PMURTC_TypeDef;
 
@@ -12586,6 +12207,6 @@ typedef struct {
 
 #endif /* __K1921VG015_H */
 
-/************************** (C) COPYRIGHT 2023 NIIET ***************************
+/************************** (C) COPYRIGHT 2025 NIIET ***************************
 *
 * END OF FILE K1921VG015.h */

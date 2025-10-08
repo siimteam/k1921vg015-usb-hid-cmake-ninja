@@ -6,8 +6,8 @@
  *
 */
 
-#include <csr.h>
-#include <plic.h>
+#include "csr.h"
+#include "plic.h"
 
 // pointers to handler functions for machine mode
 irqfunc* mach_plic_handler[32] __attribute__((section(".data")));
@@ -93,6 +93,13 @@ void PLIC_IntEnable (uint8_t target, uint32_t isr_num)
     	value |= (1<<isr_num);
     	PLIC->UIEM0 = value;
     }
+}
+
+void SetIrqHandler(Plic_IsrVect_TypeDef IsrVector, irqfunc* IRQHandler,uint8_t Priority)
+{
+	PLIC_SetIrqHandler (Plic_Mach_Target,IsrVector,IRQHandler);
+	PLIC_SetPriority   (IsrVector, Priority);
+	PLIC_IntEnable     (Plic_Mach_Target, IsrVector);
 }
 
 /*
@@ -219,3 +226,5 @@ void trap_handler (void)
 		PLIC_MachHandler();
 	}
 }
+
+

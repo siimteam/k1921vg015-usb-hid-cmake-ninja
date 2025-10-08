@@ -2,6 +2,7 @@
 ###
 ### @copyright (C) NIIET 2022. All rights reserved.
 
+
 #include "arch.h"
 #include "memasm.h"
 
@@ -19,40 +20,13 @@
 _start:
     ## reset mstatus
     csrw  mstatus, zero
-
+    ## reset PMURTC->RTC_HISTORY
+    lui     s1,0x38011
+    sw      zero,8(s1) 
 #ifdef PLF_INIT_REGS
+    init_regs_const 1, 15, 0
 #ifndef __riscv_32e
-li x1, 0
-li x2, 0
-li x3, 0
-li x4, 0
-li x5, 0
-li x6, 0
-li x7, 0
-li x8, 0
-li x9, 0
-li x10, 0
-li x11, 0
-li x12, 0
-li x13, 0
-li x14, 0
-li x15, 0
-li x16, 0
-li x17, 0
-li x18, 0
-li x19, 0
-li x20, 0
-li x21, 0
-li x22, 0
-li x23, 0
-li x24, 0
-li x25, 0
-li x26, 0
-li x27, 0
-li x28, 0
-li x29, 0
-li x30, 0
-li x31, 0
+    init_regs_const 16, 31, 0
 #endif // !__riscv_32e
 #endif // PLF_INIT_REGS
 

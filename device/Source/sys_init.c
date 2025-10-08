@@ -5,17 +5,17 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <memasm.h>
+#include "memasm.h"
 
 extern char _tdata_start[], _tdata_end[], _tbss_start[], _tbss_end[];
 
-extern const char __data_source_start;
-extern char __data_target_start;
-extern char __data_target_end;
+extern const uint8_t __data_source_start;
+extern uint8_t __data_target_start;
+extern uint8_t __data_target_end;
 
-extern const char __sdata_source_start;
-extern char __sdata_target_start;
-extern char __sdata_target_end;
+extern const uint8_t __sdata_source_start;
+extern uint8_t __sdata_target_start;
+extern uint8_t __sdata_target_end;
 
 extern void plf_init_relocate(void) __attribute__((weak));
 

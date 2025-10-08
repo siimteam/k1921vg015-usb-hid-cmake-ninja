@@ -11,12 +11,12 @@ set(CROSSTOOL_PATH ${CROSS_PLATFORM_USER_DIR}/.niiet_aspect/riscv_gcc_windows/bi
 # Look for GCC in path
 function(find_toolchain)
   foreach(CROSS_PREFIX ${ARGV})
-    find_program(CROSS_CC "${CROSS_PREFIX}gcc" "${CROSSTOOL_PATH}")
-    find_program(CROSS_CXX "${CROSS_PREFIX}g++" "${CROSSTOOL_PATH}")
-    find_program(CROSS_ASM "${CROSS_PREFIX}gcc" "${CROSSTOOL_PATH}")
-    find_program(CROSS_OBJDUMP "${CROSS_PREFIX}objdump" "${CROSSTOOL_PATH}")
-    find_program(CROSS_OBJCOPY "${CROSS_PREFIX}objcopy" "${CROSSTOOL_PATH}")
-    find_program(CROSS_SIZE "${CROSS_PREFIX}size" "${CROSSTOOL_PATH}")
+    find_program(CROSS_CC "${CROSS_PREFIX}gcc" "${CROSSTOOL_PATH}" NO_DEFAULT_PATH)
+    find_program(CROSS_CXX "${CROSS_PREFIX}g++" "${CROSSTOOL_PATH}" NO_DEFAULT_PATH)
+    find_program(CROSS_ASM "${CROSS_PREFIX}gcc" "${CROSSTOOL_PATH}" NO_DEFAULT_PATH)
+    find_program(CROSS_OBJDUMP "${CROSS_PREFIX}objdump" "${CROSSTOOL_PATH}" NO_DEFAULT_PATH)
+    find_program(CROSS_OBJCOPY "${CROSS_PREFIX}objcopy" "${CROSSTOOL_PATH}" NO_DEFAULT_PATH)
+    find_program(CROSS_SIZE "${CROSS_PREFIX}size" "${CROSSTOOL_PATH}" NO_DEFAULT_PATH)
     if (CROSS_CC AND CROSS_CXX AND CROSS_OBJCOPY AND CROSS_OBJCOPY AND CROSS_SIZE)
       message("@@ found toolchain ${CROSS_CC}")
       set(CMAKE_C_COMPILER ${CROSS_CC} PARENT_SCOPE)
@@ -34,10 +34,10 @@ find_toolchain("riscv64-unknown-elf-")
 
 set(CMAKE_ASM_FLAGS "-x assembler-with-cpp")
 set(l_L "-L")
-set(l_opt ${CROSS_PLATFORM_USER_DIR}/.niiet_aspect/niiet_aspect_sdk/device/K1921VG015/ldscripts CACHE PATH "l_opt")
+set(l_opt ${CMAKE_SOURCE_DIR}/device/ldscripts CACHE PATH "l_opt")
 message(STATUS "l_opt: ${l_opt}")
 set(t_T "-T")
-set(t_opt ${CROSS_PLATFORM_USER_DIR}/.niiet_aspect/niiet_aspect_sdk/device/K1921VG015/ldscripts/k1921vg015_flash.ld CACHE PATH "t_opt")
+set(t_opt ${CMAKE_SOURCE_DIR}/device/ldscripts/k1921vg015_flash.ld CACHE PATH "t_opt")
 message(STATUS "t_opt: ${t_opt}")
 add_compile_options(
   -c
@@ -53,7 +53,7 @@ add_compile_options(
 	"-DCKO_PLL0="
 	-static 
 	-std=gnu99 
-	${l_L}${l_opt}
+	"${l_L}${l_opt}"
 	-lc_nano 
 	-lg_nano 
 	-lgcc 
@@ -71,7 +71,7 @@ add_link_options(
 	-lc_nano 
 	-lg_nano 
 	-lgcc
-  -nostartfiles 
+	-nostartfiles
 	"${t_T}${t_opt}"
 )
 

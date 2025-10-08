@@ -41,6 +41,7 @@ extern "C" {
 #define HSICLK_VAL 1000000
 #define LSICLK_VAL 32768
 
+
 // machine irq handler
 #define MCAUSE_INTERRUPT_FLAG           (1<<31)
 #define MCAUSE_EXCEPT_MASK              0xF
@@ -67,6 +68,8 @@ extern uint32_t USBClock; 		 // USB Clock Frequency (USB PLL Clock)
 //-- Functions -----------------------------------------------------------------
 // Interrupt Enable
 void InterruptEnable(void);
+// Interrupt Disable
+void InterruptDisable(void);
 // Initialize the System
 void SystemInit(void);
 // Updates the SystemCoreClock with current core Clock retrieved from registers

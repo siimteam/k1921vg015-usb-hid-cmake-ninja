@@ -10,6 +10,7 @@
 #define _PLIC_H
 
 #include "stdint.h"
+#include <K1921VG015.h>
 
 #define __I     volatile const                /*!< defines 'read only' permissions      */
 #define __O     volatile                      /*!< defines 'write only' permissions     */
@@ -61,6 +62,7 @@ void PLIC_IntEnable (uint8_t target, uint32_t isr_num);
 void PLIC_IntDisable (uint8_t target, uint32_t isr_num);
 void PLIC_MachHandler(void);
 void PLIC_SetThreshold(uint8_t target, uint32_t value);
+void SetIrqHandler(Plic_IsrVect_TypeDef IsrVector, irqfunc* IRQHandler,uint8_t Priority);
 void trap_handler (void);
 
 #endif

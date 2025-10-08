@@ -7,8 +7,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-
-#include <retarget.h>
+#include "retarget.h"
 
 
 /**
@@ -24,13 +23,12 @@ void PrintChar(char c)
 }
 
 /** Maximum string size allowed (in bytes). */
-#define MAX_STRING_SIZE         350
+#define MAX_STRING_SIZE         100
 
 
 /** Required for proper compilation. */
 struct _reent r = {0, (FILE *) 0, (FILE *) 1, (FILE *) 0};
-// WARNING
-//struct _reent *_impure_ptr = &r;
+struct _reent *_impure_ptr = &r;
 
 /**
  * @brief  Writes a character inside the given string. Returns 1.
